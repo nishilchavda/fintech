@@ -1,9 +1,356 @@
-/* You can add global styles to this file, and also import other style files */
+/* =====================================================
+   Vault — Global Styles & Design System
+   ===================================================== */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* --- CSS Custom Properties --- */
+:root {
+  --bg: #0a0e17;
+  --bg-elevated: #111827;
+  --card: #151d2e;
+  --card-hover: #1a2438;
+  --border: #1f2937;
+  --fg: #f1f5f9;
+  --muted: #64748b;
+  --accent: #06d6a0;
+  --accent-dim: rgba(6, 214, 160, 0.15);
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #f3f4f6;
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  margin: 0;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* --- Background Pattern --- */
+.bg-pattern {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6, 214, 160, 0.08), transparent),
+    radial-gradient(circle at 80% 80%, rgba(6, 214, 160, 0.03), transparent);
+}
+
+/* --- Card Styles --- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover {
+  background: var(--card-hover);
+  border-color: rgba(6, 214, 160, 0.2);
+}
+
+/* --- Button Styles --- */
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(6, 214, 160, 0.3);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  background: var(--card);
+  border-color: var(--accent);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+}
+
+.nav-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+.nav-item:hover {
+  background: var(--card);
+  color: var(--fg);
+}
+.nav-item.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* --- Progress Bar --- */
+.progress-bar {
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Transaction Item --- */
+.transaction-item {
+  padding: 16px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.transaction-item:hover {
+  background: var(--card-hover);
+}
+
+/* --- Stat Card Glow --- */
+.stat-glow {
+  position: relative;
+}
+.stat-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, var(--accent), transparent 60%);
+  border-radius: 17px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.stat-glow:hover::before {
+  opacity: 0.3;
+}
+
+/* --- Input Styles --- */
+.vault-input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+.vault-input::placeholder {
+  color: var(--muted);
+}
+.vault-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.vault-select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+}
+.vault-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.vault-select option {
+  background: var(--bg-elevated);
+  color: var(--fg);
+}
+
+/* --- Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --- Tab Button --- */
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+.tab-btn:hover {
+  color: var(--fg);
+}
+.tab-btn.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* --- Focus States --- */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Notification Badge --- */
+.notification-badge {
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Hide Sidebar on Mobile --- */
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 50;
+    height: 100vh;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* --- Glassmorphism Header --- */
+.vault-header {
+  background: rgba(10, 14, 23, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* --- Chart Container --- */
+.chart-container {
+  position: relative;
+}
+
+/* --- Link Styles --- */
+a {
+  text-decoration: none;
+  color: inherit;
 }

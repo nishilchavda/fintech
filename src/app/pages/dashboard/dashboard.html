@@ -1,51 +1,346 @@
-<div class="p-6 bg-gray-100 min-h-screen">
-
-    <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
-
-    <div class="grid grid-cols-3 gap-6">
-
-        <div class="bg-green-500 text-white p-6 rounded-2xl shadow">
-            <h2>Total Income</h2>
-            <p class="text-2xl font-bold">₹ {{ totalIncome }}</p>
+<!-- Header -->
+<header class="sticky top-0 z-30 vault-header px-6 py-4">
+    <div class="flex items-center justify-between">
+        <!-- Search -->
+        <div
+            class="hidden sm:flex items-center gap-3 bg-[var(--card)] rounded-xl px-4 py-2.5 border border-[var(--border)] focus-within:border-[var(--accent)] transition-colors flex-1 max-w-md">
+            <svg class="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" placeholder="Search transactions..."
+                class="bg-transparent outline-none text-sm flex-1 placeholder:text-[var(--muted)] text-[var(--fg)]"
+                aria-label="Search transactions">
+            <kbd class="hidden md:inline-flex text-xs text-[var(--muted)] bg-[var(--bg)] px-2 py-1 rounded">⌘K</kbd>
         </div>
 
-        <div class="bg-red-500 text-white p-6 rounded-2xl shadow">
-            <h2>Total Expense</h2>
-            <p class="text-2xl font-bold">₹ {{ totalExpense }}</p>
-        </div>
+        <!-- Right actions -->
+        <div class="flex items-center gap-4">
+            <!-- Export button -->
+            <button (click)="exportCSV()" class="btn-ghost text-sm !py-2 !px-4 hidden sm:flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Export CSV
+            </button>
 
-        <div class="bg-blue-500 text-white p-6 rounded-2xl shadow">
-            <h2>Balance</h2>
-            <p class="text-2xl font-bold">₹ {{ balance }}</p>
-        </div>
+            <!-- Notifications -->
+            <button class="relative p-2 rounded-xl hover:bg-[var(--card)] transition-colors" aria-label="Notifications">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <span class="absolute top-1 right-1 notification-badge">3</span>
+            </button>
 
+            <!-- Profile -->
+            <button class="flex items-center gap-3 p-1.5 pr-4 rounded-xl hover:bg-[var(--card)] transition-colors"
+                aria-label="User menu">
+                <div
+                    class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#06d6a0] to-[#048a67] flex items-center justify-center font-display font-bold text-[var(--bg)]">
+                    U
+                </div>
+                <span class="hidden sm:block font-medium text-sm">User</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<div class="p-6 space-y-6">
+
+    <!-- Welcome Section -->
+    <div class="animate-fade-in-up">
+        <h1 class="font-display text-3xl md:text-4xl font-bold mb-2">{{ getGreeting() }}, User</h1>
+        <p class="text-[var(--muted)]">Here's what's happening with your finances today.</p>
     </div>
 
-    <button (click)="exportCSV()" class="mt-5 bg-green-600 text-white px-4 py-2 rounded">
-        Export Report CSV
-    </button>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-    <div class="mt-5 grid grid-cols-2 gap-4 bg-white p-6 rounded-2xl shadow">
-        <div>
-            <h2 class="text-xl font-bold mb-4">Expense Analytics</h2>
-            <div style="max-width: 400px; max-height: 400px; margin: 0 auto;">
-                <canvas id="expenseChart"></canvas>
+        <!-- Total Balance -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-1">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Total Balance</span>
+                <div class="w-10 h-10 rounded-xl bg-[var(--accent-dim)] flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ balance | number:'1.0-0' }}</div>
+            <div class="flex items-center gap-1 text-sm">
+                <span class="text-[var(--accent)]">Active</span>
+                <span class="text-[var(--muted)]">balance</span>
             </div>
         </div>
-        <div>
-            <h2 class="text-xl font-bold mb-4">Income Analytics</h2>
-            <div style="max-width: 400px; max-height: 400px; margin: 0 auto;">
-                <canvas id="incomeChart"></canvas>
+
+        <!-- Income -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-2">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Total Income</span>
+                <div class="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ totalIncome | number:'1.0-0' }}</div>
+            <div class="flex items-center gap-1 text-sm">
+                <span class="text-green-500">↑</span>
+                <span class="text-[var(--muted)]">total income received</span>
+            </div>
+        </div>
+
+        <!-- Expenses -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-3">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Total Expenses</span>
+                <div class="w-10 h-10 rounded-xl bg-red-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ totalExpense | number:'1.0-0' }}</div>
+            <div class="flex items-center gap-1 text-sm">
+                <span class="text-red-500">↓</span>
+                <span class="text-[var(--muted)]">total spent</span>
+            </div>
+        </div>
+
+        <!-- Savings -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-4">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Savings Rate</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">{{ savingsRate }}%</div>
+            <div class="flex items-center gap-1 text-sm">
+                <span class="text-blue-500">{{ savingsRate }}%</span>
+                <span class="text-[var(--muted)]">of income saved</span>
             </div>
         </div>
     </div>
-    <div class="mt-5 bg-white p-6 rounded-2xl shadow">
-        <h2 class="text-xl font-bold mb-4">Budget vs Spending</h2>
 
-        <div *ngFor="let b of budgets" class="mb-4">
-            <p class="font-bold">{{ b.category }}</p>
-            <p>Budget: ₹{{ b.limit }}</p>
-            <p>Spent: ₹{{ getSpent(b.category) }}</p>
+    <!-- Main Grid (Chart + Quick Actions) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Cash Flow Chart -->
+        <div class="lg:col-span-2 card p-6 animate-fade-in-up animate-delay-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-display text-xl font-bold">Cash Flow</h2>
+                    <p class="text-[var(--muted)] text-sm">Income vs Expenses by category</p>
+                </div>
+            </div>
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Actions + Card Preview -->
+        <div class="card p-6 animate-fade-in-up animate-delay-4">
+            <h2 class="font-display text-xl font-bold mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <a routerLink="/transactions"
+                    class="flex flex-col items-center gap-3 p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] transition-all group cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--accent-dim)] flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">Add New</span>
+                </a>
+                <button (click)="exportCSV()"
+                    class="flex flex-col items-center gap-3 p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] transition-all group cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-blue-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">Export</span>
+                </button>
+                <a routerLink="/transactions"
+                    class="flex flex-col items-center gap-3 p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] transition-all group cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">History</span>
+                </a>
+                <button
+                    class="flex flex-col items-center gap-3 p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] transition-all group cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-orange-500/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">Reports</span>
+                </button>
+            </div>
+
+            <!-- Wallet Card Preview -->
+            <div class="mt-6 pt-6 border-t border-[var(--border)]">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-display font-semibold">Summary</h3>
+                </div>
+                <div
+                    class="bg-gradient-to-br from-[#1a2438] to-[#0d1420] rounded-2xl p-5 border border-[var(--border)]">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <div class="text-[var(--muted)] text-xs mb-1">Net Worth</div>
+                            <div class="font-display text-2xl font-bold">₹{{ balance | number:'1.0-0' }}</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-[var(--accent-dim)] flex items-center justify-center">
+                            <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-[var(--muted)] text-xs mb-1">Income</div>
+                            <div class="text-green-400 font-medium text-sm">+₹{{ totalIncome | number:'1.0-0' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-[var(--muted)] text-xs mb-1">Expenses</div>
+                            <div class="text-red-400 font-medium text-sm">-₹{{ totalExpense | number:'1.0-0' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-[var(--muted)] text-xs mb-1">Saved</div>
+                            <div class="text-blue-400 font-medium text-sm">{{ savingsRate }}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Analytics Charts -->
+        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Expense Analytics -->
+            <div class="card p-6 animate-fade-in-up animate-delay-5">
+                <h2 class="font-display text-lg font-bold mb-4">Expense Breakdown</h2>
+                <div class="chart-container" style="height: 220px;">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+            <!-- Income Analytics -->
+            <div class="card p-6 animate-fade-in-up animate-delay-5">
+                <h2 class="font-display text-lg font-bold mb-4">Income Sources</h2>
+                <div class="chart-container" style="height: 220px;">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Progress -->
+        <div class="card p-6 animate-fade-in-up animate-delay-5">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-display text-xl font-bold">Budgets</h2>
+                <a routerLink="/transactions" class="text-[var(--accent)] text-sm font-medium hover:underline">Edit</a>
+            </div>
+            <div class="space-y-5">
+                <div *ngFor="let b of budgets; let i = index" class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">{{ b.category }}</span>
+                        <span class="text-sm"
+                            [ngClass]="{'text-[var(--warning)]': isBudgetWarning(b), 'text-[var(--muted)]': !isBudgetWarning(b)}">
+                            ₹{{ getSpent(b.category) | number:'1.0-0' }} / ₹{{ b.limit | number:'1.0-0' }}
+                        </span>
+                    </div>
+                    <div class="progress-bar h-2">
+                        <div class="progress-fill" [style.width.%]="getBudgetPercent(b)"
+                            [style.background]="getBudgetColor(b, i)">
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="budgets.length === 0" class="text-center py-8">
+                    <svg class="w-12 h-12 mx-auto text-[var(--muted)] mb-3 opacity-50" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-[var(--muted)] text-sm">No budgets set yet</p>
+                    <a routerLink="/transactions"
+                        class="text-[var(--accent)] text-sm font-medium mt-2 inline-block hover:underline">
+                        Set your first budget →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card p-6 animate-fade-in-up animate-delay-5">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="font-display text-xl font-bold">Recent Transactions</h2>
+            <a routerLink="/transactions" class="text-[var(--accent)] text-sm font-medium hover:underline">View All</a>
+        </div>
+        <div class="space-y-2">
+            <div *ngFor="let t of recentTransactions" class="transaction-item flex items-center gap-4 cursor-pointer">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+                    [style.background]="getTransactionColor(t.type) + '20'">
+                    <!-- Income icon -->
+                    <svg *ngIf="t.type === 'income'" class="w-5 h-5" [style.color]="getTransactionColor(t.type)"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                    </svg>
+                    <!-- Expense icon -->
+                    <svg *ngIf="t.type === 'expense'" class="w-5 h-5" [style.color]="getTransactionColor(t.type)"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="font-medium truncate">{{ t.description || t.category }}</div>
+                    <div class="text-[var(--muted)] text-sm">{{ t.category }}</div>
+                </div>
+                <div class="text-right">
+                    <div class="font-display font-semibold" [ngClass]="{'text-[var(--accent)]': t.type === 'income'}">
+                        {{ t.type === 'income' ? '+' : '-' }}₹{{ t.amount | number:'1.2-2' }}
+                    </div>
+                    <div class="text-[var(--muted)] text-sm">{{ t.type }}</div>
+                </div>
+            </div>
+            <div *ngIf="recentTransactions.length === 0" class="text-center py-8">
+                <svg class="w-12 h-12 mx-auto text-[var(--muted)] mb-3 opacity-50" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <p class="text-[var(--muted)] text-sm">No transactions yet</p>
+                <a routerLink="/transactions"
+                    class="text-[var(--accent)] text-sm font-medium mt-2 inline-block hover:underline">
+                    Add your first transaction →
+                </a>
+            </div>
         </div>
     </div>
 

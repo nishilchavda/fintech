@@ -1,2 +1,12 @@
-<app-navbar></app-navbar>
-<router-outlet></router-outlet>
+<!-- Mobile Menu Overlay -->
+<div *ngIf="showSidebar" id="overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+<div class="flex min-h-screen bg-pattern">
+    <!-- Sidebar (only on authenticated pages) -->
+    <app-navbar *ngIf="showSidebar"></app-navbar>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
+        <router-outlet></router-outlet>
+    </main>
+</div>

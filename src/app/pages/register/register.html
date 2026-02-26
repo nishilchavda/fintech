@@ -1,1 +1,81 @@
-<p>register works!</p>
+<div class="min-h-screen flex items-center justify-center bg-pattern p-4">
+    <!-- Background grid overlay -->
+    <div class="fixed inset-0 opacity-30 pointer-events-none"
+        style="background-image: linear-gradient(rgba(31,41,55,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(31,41,55,0.3) 1px, transparent 1px); background-size: 60px 60px;">
+    </div>
+
+    <div class="relative w-full max-w-md animate-fade-in-up">
+        <!-- Logo -->
+        <div class="flex items-center justify-center gap-3 mb-10">
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#06d6a0] to-[#048a67] flex items-center justify-center">
+                <svg class="w-7 h-7 text-[#0a0e17]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <span class="font-display font-bold text-3xl tracking-tight">Vault</span>
+        </div>
+
+        <!-- Register Card -->
+        <div class="card p-8">
+            <h2 class="font-display text-2xl font-bold text-center mb-2">Create your account</h2>
+            <p class="text-[var(--muted)] text-center text-sm mb-8">Start managing your finances like a pro</p>
+
+            <!-- Error message -->
+            <div *ngIf="errorMessage"
+                class="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ errorMessage }}
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-[var(--muted)] mb-1.5 block">Email Address</label>
+                    <input [(ngModel)]="email" class="vault-input" type="email" placeholder="you@example.com"
+                        id="register-email">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-[var(--muted)] mb-1.5 block">Password</label>
+                    <input [(ngModel)]="password" class="vault-input" type="password" placeholder="••••••••"
+                        id="register-password">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-[var(--muted)] mb-1.5 block">Confirm Password</label>
+                    <input [(ngModel)]="confirmPassword" class="vault-input" type="password" placeholder="••••••••"
+                        id="register-confirm-password">
+                </div>
+
+                <button (click)="register()"
+                    class="btn-primary w-full text-center flex items-center justify-center gap-2 mt-2"
+                    [disabled]="isLoading" id="register-submit">
+                    <svg *ngIf="isLoading" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    {{ isLoading ? 'Creating account...' : 'Create Account' }}
+                </button>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-[var(--muted)] text-sm">
+                    Already have an account?
+                    <a routerLink="/login" class="text-[var(--accent)] font-medium hover:underline">Sign in</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-[var(--muted)] text-xs mt-6">
+            © 2026 Vault. Secure finance management.
+        </p>
+    </div>
+</div>
