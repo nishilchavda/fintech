@@ -1,0 +1,75 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+
+    <h1 class="text-3xl font-bold mb-6">Transactions</h1>
+
+    <div class="bg-white p-6 rounded-2xl shadow mb-6">
+        <h2 class="text-xl font-bold mb-4">Add Transaction</h2>
+
+        <div class="grid grid-cols-2 gap-4">
+            <select [(ngModel)]="type" class="p-2 border rounded">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+            <input [(ngModel)]="amount" class="p-2 border rounded" type="number" placeholder="Amount">
+            <input [(ngModel)]="category" class="p-2 border rounded" placeholder="Category">
+            <input [(ngModel)]="description" class="p-2 border rounded" placeholder="Description">
+        </div>
+
+        <button (click)="addTransaction()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+            Add
+        </button>
+    </div>
+    <div class="bg-yellow-100 p-4 rounded mb-6">
+        <h2 class="font-bold mb-2">Set Category Budget</h2>
+
+        <input [(ngModel)]="budgetCategory" placeholder="Category" class="border p-2 mr-2 rounded">
+
+        <input [(ngModel)]="budgetLimit" type="number" placeholder="Limit" class="border p-2 mr-2 rounded">
+
+        <button (click)="setBudget()" class="bg-yellow-500 px-4 py-2 text-white rounded">
+            Save Budget
+        </button>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow">
+        <h2 class="text-xl font-bold mb-4">History</h2>
+
+        <div *ngFor="let t of transactions" class="flex justify-between items-center p-3 border-b">
+            <div>
+                <p class="font-bold">{{ t.category }}</p>
+                <p class="text-sm text-gray-500">{{ t.description }}</p>
+            </div>
+            <p class="font-bold">₹ {{ t.amount }}</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- <div class="p-6">
+  <h1 class="text-2xl font-bold mb-4">Add Transaction</h1>
+
+  <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+    <input [(ngModel)]="amount" type="number" placeholder="Amount"
+      class="border p-2 mr-2 rounded">
+
+    <select [(ngModel)]="type" class="border p-2 mr-2 rounded">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+
+    <input [(ngModel)]="category" placeholder="Category"
+      class="border p-2 mr-2 rounded">
+
+    <button (click)="add()" class="bg-blue-600 text-white px-4 py-2 rounded">
+      Add
+    </button>
+  </div>
+
+  <h2 class="text-xl font-bold mb-2">History</h2>
+
+  <div *ngFor="let t of transactions" class="bg-gray-100 p-4 mb-2 rounded flex justify-between">
+    <div>
+      ₹ {{ t.amount }} - {{ t.category }}
+    </div>
+    <button (click)="delete(t.id)" class="text-red-600">Delete</button>
+  </div>
+</div> -->
