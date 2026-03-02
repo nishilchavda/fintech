@@ -1,0 +1,221 @@
+<!-- Header -->
+<header class="sticky top-0 z-30 vault-header px-6 py-4">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="font-display text-2xl md:text-3xl font-bold">Budgets</h1>
+            <p class="text-[var(--muted)] text-sm">Manage your spending limits by category</p>
+        </div>
+        <button (click)="showForm = !showForm"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all"
+            [ngClass]="showForm ? 'bg-[var(--card)] border border-[var(--border)] text-[var(--fg)]' : 'bg-[var(--accent)] text-[var(--bg)] hover:brightness-110'">
+            <svg *ngIf="!showForm" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <svg *ngIf="showForm" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {{ showForm ? 'Cancel' : 'Add Budget' }}
+        </button>
+    </div>
+</header>
+
+<div class="p-6 space-y-6">
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage"
+        class="flex items-center gap-3 p-4 rounded-xl bg-[var(--accent-dim)] border border-[var(--accent)] animate-fade-in-up">
+        <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span class="text-sm font-medium text-[var(--accent)]">{{ successMessage }}</span>
+    </div>
+
+    <!-- Add Budget Form -->
+    <div *ngIf="showForm" class="card p-6 animate-fade-in-up border-[var(--accent)] border">
+        <h2 class="font-display text-xl font-bold mb-6">{{ editingBudget ? 'Edit Budget' : 'New Budget' }}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm text-[var(--muted)] mb-2 font-medium">Category</label>
+                <select [(ngModel)]="budgetCategory"
+                    class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm focus:border-[var(--accent)] outline-none transition-colors text-[var(--fg)]">
+                    <option value="" disabled>Select category</option>
+                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm text-[var(--muted)] mb-2 font-medium">Monthly Limit (₹)</label>
+                <input type="number" [(ngModel)]="budgetLimit" placeholder="e.g. 5000"
+                    class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm focus:border-[var(--accent)] outline-none transition-colors text-[var(--fg)] placeholder:text-[var(--muted)]">
+            </div>
+            <div class="flex items-end">
+                <button (click)="saveBudget()"
+                    class="w-full bg-[var(--accent)] text-[var(--bg)] font-medium py-3 px-6 rounded-xl hover:brightness-110 transition-all text-sm">
+                    {{ editingBudget ? 'Update Budget' : 'Save Budget' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Total Budgets -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-1">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Active Budgets</span>
+                <div class="w-10 h-10 rounded-xl bg-[var(--accent-dim)] flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">{{ budgets.length }}</div>
+            <div class="text-sm text-[var(--muted)]">categories tracked</div>
+        </div>
+
+        <!-- Total Budget Limit -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-2">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Total Budget</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ totalBudgetLimit | number:'1.0-0' }}</div>
+            <div class="text-sm text-[var(--muted)]">monthly allowance</div>
+        </div>
+
+        <!-- Total Spent -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-3">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Total Spent</span>
+                <div class="w-10 h-10 rounded-xl bg-red-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ totalSpent | number:'1.0-0' }}</div>
+            <div class="text-sm text-[var(--muted)]">across all budgets</div>
+        </div>
+
+        <!-- Remaining -->
+        <div class="card stat-glow p-6 animate-fade-in-up animate-delay-4">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-[var(--muted)] text-sm font-medium">Remaining</span>
+                <div class="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+            <div class="font-display text-3xl font-bold mb-2">₹{{ totalRemaining | number:'1.0-0' }}</div>
+            <div class="flex items-center gap-1 text-sm">
+                <span [class]="totalRemaining >= 0 ? 'text-green-500' : 'text-red-500'">
+                    {{ totalRemaining >= 0 ? 'Under budget' : 'Over budget' }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Chart + List -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Budget Overview Chart -->
+        <div class="card p-6 animate-fade-in-up animate-delay-5">
+            <h2 class="font-display text-xl font-bold mb-6">Budget Usage</h2>
+            <div class="chart-container" style="height: 280px;">
+                <canvas id="budgetUsageChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Budget Cards -->
+        <div class="lg:col-span-2 space-y-4 animate-fade-in-up animate-delay-5">
+            <div *ngFor="let b of budgets; let i = index"
+                class="card p-5 hover:border-[var(--accent)] transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            [style.background]="chartColors[i % chartColors.length] + '25'"
+                            [style.color]="chartColors[i % chartColors.length]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-display font-bold text-lg">{{ b.category }}</h3>
+                            <p class="text-[var(--muted)] text-sm">
+                                ₹{{ getSpent(b.category) | number:'1.0-0' }} of ₹{{ b.limit | number:'1.0-0' }} spent
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold px-3 py-1 rounded-lg" [ngClass]="{
+                                'bg-green-500/15 text-green-500': getBudgetPercent(b) < 70,
+                                'bg-yellow-500/15 text-yellow-500': getBudgetPercent(b) >= 70 && getBudgetPercent(b) < 90,
+                                'bg-red-500/15 text-red-500': getBudgetPercent(b) >= 90
+                            }">
+                            {{ getBudgetPercent(b) }}%
+                        </span>
+                        <button (click)="editBudget(b)"
+                            class="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-[var(--bg)] transition-all"
+                            title="Edit">
+                            <svg class="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button (click)="deleteBudget(b.id)"
+                            class="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/15 transition-all"
+                            title="Delete">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="progress-bar h-3 rounded-full">
+                    <div class="progress-fill rounded-full transition-all duration-500"
+                        [style.width.%]="getBudgetPercent(b)" [style.background]="getBudgetColor(b, i)">
+                    </div>
+                </div>
+                <div class="flex justify-between mt-2 text-xs text-[var(--muted)]">
+                    <span>₹0</span>
+                    <span>₹{{ b.limit | number:'1.0-0' }}</span>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="budgets.length === 0" class="card p-12 text-center animate-fade-in-up">
+                <div class="w-20 h-20 rounded-2xl bg-[var(--accent-dim)] flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">No budgets set yet</h3>
+                <p class="text-[var(--muted)] text-sm mb-6 max-w-md mx-auto">
+                    Create budgets to track your spending by category. Set monthly limits and stay on top of your
+                    finances.
+                </p>
+                <button (click)="showForm = true"
+                    class="inline-flex items-center gap-2 bg-[var(--accent)] text-[var(--bg)] font-medium py-3 px-6 rounded-xl hover:brightness-110 transition-all text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Create Your First Budget
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

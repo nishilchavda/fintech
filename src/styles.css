@@ -21,6 +21,45 @@
   --warning: #f59e0b;
 }
 
+/* Light Theme */
+:root.light {
+  --bg: #f8fafc;
+  --bg-elevated: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --accent: #059669;
+  --accent-dim: rgba(5, 150, 105, 0.12);
+  --danger: #dc2626;
+  --warning: #d97706;
+}
+
+:root.light .sidebar {
+  background: #ffffff;
+  border-right-color: #e2e8f0;
+}
+
+:root.light .vault-header {
+  background: rgba(248, 250, 252, 0.85);
+  border-bottom-color: #e2e8f0;
+}
+
+:root.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+:root.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+:root.light .bg-pattern {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(5, 150, 105, 0.06), transparent),
+    radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.03), transparent);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -334,6 +373,20 @@ body {
   .sidebar.open {
     transform: translateX(0);
   }
+
+  /* Add space for hamburger button on mobile */
+  .vault-header {
+    padding-left: 3.5rem !important;
+  }
+}
+
+/* --- Overlay Fade In --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
 }
 
 /* --- Glassmorphism Header --- */
@@ -354,3 +407,4 @@ a {
   text-decoration: none;
   color: inherit;
 }
+

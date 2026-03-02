@@ -4,6 +4,7 @@ import { Navbar } from './components/navbar/navbar';
 import { NgIf } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class App {
   protected readonly title = signal('Vault');
   showSidebar = true;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private themeService: ThemeService) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -24,3 +25,4 @@ export class App {
       });
   }
 }
+

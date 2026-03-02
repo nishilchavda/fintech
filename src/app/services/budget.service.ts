@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, collectionData, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, collectionData, query, where, doc, deleteDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
 
-  constructor(private firestore: Firestore, private auth: Auth) {}
+  constructor(private firestore: Firestore, private auth: Auth) { }
 
   setBudget(category: string, limit: number) {
     const ref = collection(this.firestore, 'budgets');
@@ -20,5 +20,10 @@ export class BudgetService {
     const ref = collection(this.firestore, 'budgets');
     const q = query(ref, where('userId', '==', this.auth.currentUser?.uid));
     return collectionData(q, { idField: 'id' });
+  }
+
+  deleteBudget(id: string) {
+    const ref = doc(this.firestore, `budgets/${id}`);
+    return deleteDoc(ref);
   }
 }
